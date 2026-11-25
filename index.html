@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="description" content="Editor de ofertas do Comercial Silva. Crie banners promocionais e exporte imagens direto do navegador.">
+  <title>Editor de Ofertas | Comercial Silva</title>
+  <link rel="icon" type="image/png" href="assets/logo-comercial-silva.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700;800;900&family=Montserrat:wght@700;900&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#form-oferta">Ir para o editor</a>
+  <div class="app-shell">
+    <!-- MENU LATERAL -->
+    <aside class="sidebar" aria-label="Navegação do sistema">
+      <div class="brand">
+        <div class="brand-image" id="brand-logo-trigger" title="Clique para alterar a logomarca">
+          <img id="sidebar-brand-img" src="assets/logo-comercial-silva.png" alt="Logomarca do Comercial Silva">
+        </div>
+        <div class="brand-copy">
+          <span class="brand-name" id="sidebar-brand-name">Comercial Silva</span>
+          <span class="brand-caption" id="sidebar-brand-caption">Estúdio de Ofertas Pro</span>
+        </div>
+        <input type="file" id="brand-logo-file-input" accept="image/png,image/jpeg,image/webp" hidden>
+      </div>
+
+      <div class="side-section-label">FERRAMENTAS</div>
+      <nav class="side-nav">
+        <button type="button" class="nav-item" id="nav-library" data-screen="library">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          Biblioteca de Modelos
+        </button>
+        <button type="button" class="nav-item selected" id="nav-editor" data-screen="editor" aria-current="page">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          Editar Arte
+        </button>
+        <button type="button" class="nav-item" id="nav-history" data-screen="history">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8m0-5v5h5M12 7v5l3 2"/></svg>
+          Ofertas Salvas <span id="side-count" class="nav-count">0</span>
+        </button>
+        <button type="button" class="nav-item" id="nav-plans" data-screen="plans">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+          Planos e Assinatura
+        </button>
+        <button type="button" class="nav-item" id="nav-admin" data-screen="admin">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 4v5c0 5-3 8-7 9-4-1-7-4-7-9V7l7-4z"/></svg>
+          Painel Admin
+        </button>
+        <button type="button" class="nav-item" id="nav-help" data-screen="help">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 4.6 1.2C13.4 11.2 12 11.6 12 13v.5M12 17.3v.2"/></svg>
+          Como Usar
+        </button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="sidebar-note"><span class="online-dot"></span><span id="sidebar-plan-status">Plano: Gratuito (5 dias)</span></div>
+        <p id="sidebar-footer-copy">Comercial Silva · Exportação HD 2400×1720px sem marca-d'água</p>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div class="breadcrumb">
+          <span id="topbar-brand-name">Comercial Silva</span>
+          <span class="crumb-separator">/</span>
+          <strong id="breadcrumb-page">Editar Arte</strong>
+        </div>
+        <div class="topbar-right">
+          <button type="button" class="btn btn-ghost btn-sm" id="quick-library-btn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Modelos Prontos
+          </button>
+          <span class="topbar-pill" id="topbar-plan-pill"><span class="online-dot"></span> Assinatura ativa</span>
+          <span class="topbar-avatar" id="topbar-avatar" aria-label="Comercial Silva">CS</span>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <!-- TELA 1: EDITOR PRINCIPAL -->
+        <section class="screen" id="screen-editor">
+          <div class="page-titlebar">
+            <div>
+              <div class="eyebrow" id="editor-subcaption">ESTÚDIO DE OFERTAS PRO</div>
+              <h1>Editar Textos e Produtos <span class="sparkle">✦</span></h1>
+              <p>Personalize chamadas, preços, imagem do produto e paletas de cores em tempo real.</p>
+            </div>
+            <div class="title-actions">
+              <button type="button" class="btn btn-ghost" id="clear-btn">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8m0-5v5h5"/></svg>
+                Limpar / Novo
+              </button>
+            </div>
+          </div>
+
+          <div class="editor-grid">
+            <!-- COLUNA ESQUERDA: CONTROLES -->
+            <div class="form-column">
+              <form id="form-oferta" class="editor-form" novalidate>
+
+                <!-- BLOCO 01: IMAGEM DO PRODUTO (PNG) -->
+                <div class="panel form-panel">
+                  <div class="panel-heading">
+                    <div class="number-chip">01</div>
+                    <div>
+                      <h2>Imagem do Produto (PNG)</h2>
+                      <p>Arraste livremente na arte após inserir</p>
+                    </div>
+                    <span id="product-img-badge" class="status-badge" hidden>Ativa</span>
+                  </div>
+
+                  <label class="dropzone-box" for="product-png-input">
+                    <input type="file" id="product-png-input" accept="image/png, image/webp, image/jpeg" hidden>
+                    <div class="dropzone-icon">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+                    </div>
+                    <div class="dropzone-text">
+                      <strong>Inserir Imagem PNG do Produto</strong>
+                      <span>Arraste livremente na arte após inserir</span>
+                    </div>
+                  </label>
+
+                  <div id="product-img-controls" class="product-controls" hidden>
+                    <div class="range-group">
+                      <div class="range-header">
+                        <span>Tamanho do Produto</span>
+                        <strong id="product-img-size-val">100%</strong>
+                      </div>
+                      <input type="range" id="product-img-size-range" min="30" max="220" value="100">
+                    </div>
+
+                    <div class="field-row">
+                      <button type="button" class="btn btn-outline btn-sm" id="btn-product-center">Centralizar</button>
+                      <button type="button" class="btn btn-outline btn-sm" id="btn-product-layer">Camada: Frente</button>
+                    </div>
+                    <button type="button" class="btn btn-danger-ghost btn-sm btn-wide" id="btn-product-remove">Remover Imagem do Produto</button>
+                  </div>
+                </div>
+
+                <!-- BLOCO 02: TEXTOS E PREÇOS -->
+                <div class="panel form-panel">
+                  <div class="panel-heading">
+                    <div class="number-chip">02</div>
+                    <div>
+                      <h2>Textos, Preço e Tipografia</h2>
+                      <p>Personalize chamadas, preços e informações</p>
+                    </div>
+                  </div>
+
+                  <div class="field-row">
+                    <div class="field-group">
+                      <label for="titulo">Chamada Principal <span class="optional">(Ex: OFERTA)</span></label>
+                      <input id="titulo" type="text" maxlength="28" value="OFERTA" placeholder="OFERTA">
+                    </div>
+                    <div class="field-group">
+                      <label for="subtitulo">Selo / Destaque <span class="optional">(Ex: IMPERDÍVEL)</span></label>
+                      <input id="subtitulo" type="text" maxlength="32" value="IMPERDÍVEL NESTA SEMANA" placeholder="IMPERDÍVEL NESTA SEMANA">
+                    </div>
+                  </div>
+
+                  <div class="field-group">
+                    <label for="produto">Nome do Produto <span class="required">*</span></label>
+                    <input id="produto" name="produto" type="text" maxlength="95" value="Cerveja Pilsen 350ml" placeholder="Ex: Cerveja Pilsen 350ml" autocomplete="off" required>
+                  </div>
+
+                  <div class="field-group">
+                    <label for="descricao">Descrição / Quantidade / Peso</label>
+                    <input id="descricao" name="descricao" type="text" maxlength="90" value="Lata Fardinho c/ 12 unidades" placeholder="Ex: Lata Fardinho c/ 12 unidades" autocomplete="off">
+                  </div>
+
+                  <div class="field-row-price">
+                    <div class="field-group">
+                      <label for="moeda">Moeda</label>
+                      <input id="moeda" type="text" maxlength="5" value="R$">
+                    </div>
+                    <div class="field-group">
+                      <label for="preco">Preço Promocional <span class="required">*</span></label>
+                      <input id="preco" name="preco" type="text" inputmode="decimal" maxlength="14" value="9,99" placeholder="9,99" required>
+                    </div>
+                  </div>
+
+                  <div class="field-group">
+                    <label for="unidade">Unidade de Venda <span class="optional">(Ex: KG, UN, PCT)</span></label>
+                    <input id="unidade" name="unidade" type="text" maxlength="32" value="APENAS POR UN." placeholder="APENAS POR UN.">
+                  </div>
+
+                  <div class="sub-box">
+                    <div class="sub-box-title">Tipografia & Alinhamento</div>
+                    <div class="field-row">
+                      <div class="field-group" style="margin-bottom:0">
+                        <label for="fonte">Fonte Principal</label>
+                        <select id="fonte">
+                          <option value="impact">Impacto / Black (Padrão)</option>
+                          <option value="inter">Inter (Moderna)</option>
+                          <option value="montserrat">Montserrat (Forte)</option>
+                          <option value="oswald">Oswald (Supermercado)</option>
+                        </select>
+                      </div>
+                      <div class="field-group" style="margin-bottom:0">
+                        <label>Alinhamento do Produto</label>
+                        <div class="align-group" role="group" aria-label="Alinhamento do texto">
+                          <button type="button" class="align-btn active" data-align="left" title="Alinhar à Esquerda">
+                            <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h12M3 18h16"/></svg>
+                          </button>
+                          <button type="button" class="align-btn" data-align="center" title="Centralizar">
+                            <svg viewBox="0 0 24 24"><path d="M3 6h18M6 12h12M4 18h16"/></svg>
+                          </button>
+                          <button type="button" class="align-btn" data-align="right" title="Alinhar à Direita">
+                            <svg viewBox="0 0 24 24"><path d="M3 6h18M9 12h12M5 18h16"/></svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="field-group" style="margin-top:16px">
+                    <label for="logo-upload">Logomarca no Cartaz <span class="optional">(opcional)</span></label>
+                    <input id="logo-upload" type="file" accept="image/png,image/jpeg,image/webp" class="file-input">
+                  </div>
+
+                  <label class="checkbox-row" for="mostrar-validade">
+                    <input type="checkbox" id="mostrar-validade">
+                    <span>Mostrar validade da oferta no banner</span>
+                  </label>
+                  <div class="field-group validity-field" id="validity-wrapper" hidden>
+                    <label for="validade">Válida até</label>
+                    <input type="date" id="validade">
+                  </div>
+                </div>
+
+                <!-- BLOCO 03: PALETAS & SWATCHES -->
+                <div class="panel form-panel">
+                  <div class="panel-heading">
+                    <div class="number-chip">03</div>
+                    <div>
+                      <h2>Paletas & Swatches</h2>
+                      <p>Paletas profissionais e personalização de cores</p>
+                    </div>
+                  </div>
+
+                  <div class="field-group">
+                    <label>Paletas Profissionais Prontas</label>
+                    <div class="swatches-grid" id="palette-swatches-grid"></div>
+                  </div>
+
+                  <div class="sub-box">
+                    <div class="sub-box-title">Ajuste Individual de Cores</div>
+                    <div class="color-pickers-grid">
+                      <label class="color-picker-item">
+                        <span>Cor de Fundo</span>
+                        <input type="color" id="color-bg" value="#1045b2">
+                      </label>
+                      <label class="color-picker-item">
+                        <span>Faixas / Moldura</span>
+                        <input type="color" id="color-accent" value="#ff7f05">
+                      </label>
+                      <label class="color-picker-item">
+                        <span>Quadro de Preço</span>
+                        <input type="color" id="color-pricebox" value="#ffdf00">
+                      </label>
+                      <label class="color-picker-item">
+                        <span>Cor dos Textos</span>
+                        <input type="color" id="color-text" value="#ffffff">
+                      </label>
+                    </div>
+                    <button type="button" class="btn btn-ghost btn-sm btn-wide" id="reset-colors-btn" style="margin-top:12px">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8m0-5v5h5"/></svg>
+                      Restaurar Cores Originais do Modelo
+                    </button>
+                  </div>
+                </div>
+
+                <div class="form-footer">
+                  <button type="submit" class="btn btn-primary btn-wide" id="save-btn">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h12l3 3v13H4V4h1m3 0v6h8V4M8 20v-7h8v7"/></svg>
+                    Salvar Oferta na Biblioteca
+                  </button>
+                  <span id="save-status" class="save-hint">Pré-visualização automática</span>
+                </div>
+              </form>
+            </div>
+
+            <!-- COLUNA DIREITA: PRÉVIA DO CANVAS -->
+            <section class="preview-column" aria-labelledby="preview-title">
+              <div class="panel preview-panel">
+                <div class="preview-head">
+                  <div>
+                    <div class="preview-eyebrow"><span class="live-dot"></span> VISUALIZAÇÃO EM TEMPO REAL</div>
+                    <h2 id="preview-title">Prévia do Cartaz Promocional</h2>
+                  </div>
+                  <span class="template-tag" id="active-template-tag">Comercial Silva</span>
+                </div>
+
+                <div class="preview-stage" id="preview-stage">
+                  <canvas id="banner-canvas" width="1200" height="860" role="img" aria-label="Prévia do banner de oferta"></canvas>
+                </div>
+
+                <div class="preview-meta">
+                  <span>Formato horizontal · 1200 × 860 px</span>
+                  <span>Arraste o produto PNG direto na arte</span>
+                  <span>Exportação 2400 × 1720 px</span>
+                </div>
+              </div>
+
+              <div class="panel export-panel">
+                <div>
+                  <h3>Exportar Arte Final</h3>
+                  <p>Imagem em alta definição pronta para WhatsApp, TV ou impressão.</p>
+                </div>
+                <div class="export-actions">
+                  <button class="btn btn-primary" type="button" id="png-btn">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 17v4h16v-4"/></svg>
+                    Baixar PNG
+                  </button>
+                  <button class="btn btn-outline" type="button" id="jpg-btn">Baixar JPG</button>
+                  <button class="btn btn-outline" type="button" id="print-btn">Imprimir / PDF</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <!-- TELA 2: BIBLIOTECA DE MODELOS -->
+        <section class="screen" id="screen-library" hidden>
+          <div class="page-titlebar">
+            <div>
+              <div class="eyebrow">CATÁLOGO VISUAL</div>
+              <h1>Biblioteca de Modelos</h1>
+              <p>Escolha entre modelos profissionais prontos por setor do supermercado.</p>
+            </div>
+            <button class="btn btn-ghost" type="button" id="back-to-editor-btn">Voltar ao Editor</button>
+          </div>
+
+          <div class="panel library-panel">
+            <div class="category-filters" id="category-filters"></div>
+            <div class="templates-grid" id="templates-grid"></div>
+          </div>
+        </section>
+
+        <!-- TELA 3: OFERTAS SALVAS -->
+        <section class="screen" id="screen-history" hidden>
+          <div class="page-titlebar">
+            <div>
+              <div class="eyebrow">MEUS PROJETOS</div>
+              <h1>Ofertas Salvas</h1>
+              <p>Reutilize, edite ou remova campanhas criadas neste navegador.</p>
+            </div>
+            <button class="btn btn-primary" type="button" id="new-from-history">+ Nova Oferta</button>
+          </div>
+          <div class="panel library-panel">
+            <div class="library-head">
+              <div>
+                <h2>Minha Biblioteca <span id="library-count">(0)</span></h2>
+                <p>As ofertas são armazenadas localmente neste dispositivo.</p>
+              </div>
+            </div>
+            <div id="history-list" class="history-list"></div>
+          </div>
+        </section>
+
+        <!-- TELA 4: PLANOS E ASSINATURA -->
+        <section class="screen" id="screen-plans" hidden>
+          <div class="page-titlebar">
+            <div>
+              <div class="eyebrow">GESTÃO DE ASSINATURA</div>
+              <h1>Planos e Ativação</h1>
+              <p>Escolha ou renove seu plano e valide sua chave de ativação correspondente.</p>
+            </div>
+            <span class="template-tag" id="current-plan-badge">Plano Atual: Gratuito (5 dias)</span>
+          </div>
+
+          <div class="panel library-panel" style="margin-bottom:20px">
+            <div class="plans-grid" id="plans-cards-grid"></div>
+          </div>
+
+          <div class="editor-grid">
+            <div class="panel form-panel">
+              <div class="panel-heading">
+                <div class="number-chip">01</div>
+                <div>
+                  <h2>Contratar ou Renovar Assinatura</h2>
+                  <p>Selecione o plano e informe a senha exclusiva do plano escolhido</p>
+                </div>
+              </div>
+
+              <form id="form-subscription" class="editor-form" novalidate>
+                <div class="field-group">
+                  <label for="sub-user-name">Usuário / Responsável</label>
+                  <input id="sub-user-name" type="text" value="Usuário Comercial Silva" placeholder="Nome do usuário">
+                </div>
+
+                <div class="field-group">
+                  <label for="sub-plan-select">Plano Selecionado</label>
+                  <select id="sub-plan-select">
+                    <option value="gratuito">Gratuito — 5 dias (R$ 0,00)</option>
+                    <option value="mensal">Mensal — 30 dias (R$ 180,00)</option>
+                    <option value="trimestral">Trimestral — 90 dias (R$ 350,00)</option>
+                    <option value="anual">Anual — 365 dias (R$ 500,00)</option>
+                  </select>
+                </div>
+
+                <div class="field-group">
+                  <label for="sub-activation-code">Senha de Ativação Exclusiva</label>
+                  <input id="sub-activation-code" type="text" placeholder="Digite a senha do plano selecionado" autocomplete="off">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-wide" id="sub-activate-btn">
+                  Contratar / Renovar Assinatura
+                </button>
+              </form>
+            </div>
+
+            <div class="panel form-panel">
+              <div class="panel-heading">
+                <div class="number-chip">02</div>
+                <div>
+                  <h2>Status Atual e Códigos Morse</h2>
+                  <p>Referência Morse de cada plano e situação da assinatura ativa</p>
+                </div>
+              </div>
+
+              <div class="sub-box" id="subscription-summary-box" style="margin-bottom:14px"></div>
+              <div id="morse-reference-list" class="history-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TELA 5: PAINEL ADMINISTRATIVO -->
+        <section class="screen" id="screen-admin" hidden>
+          <div class="page-titlebar">
+            <div>
+              <div class="eyebrow">CONTROLE ADMINISTRATIVO</div>
+              <h1>Painel Administrativo e Identidade Visual</h1>
+              <p>Gerencie assinaturas, renovações, pagamentos, uso de senhas e identidade da empresa.</p>
+            </div>
+            <label class="checkbox-row" style="margin-top:0">
+              <input type="checkbox" id="admin-mode-toggle" checked>
+              <span>Perfil Administrador Ativo</span>
+            </label>
+          </div>
+
+          <div class="editor-grid" style="margin-bottom:20px">
+            <div class="panel form-panel">
+              <div class="panel-heading">
+                <div class="number-chip">ID</div>
+                <div>
+                  <h2>Identidade Visual da Empresa</h2>
+                  <p>Altere nomes exibidos no sistema e faça upload da logomarca</p>
+                </div>
+              </div>
+
+              <form id="form-branding" class="editor-form" novalidate>
+                <div class="field-group">
+                  <label for="brand-main-name">Nome Principal da Empresa</label>
+                  <input id="brand-main-name" type="text" maxlength="60" value="Comercial Silva">
+                </div>
+
+                <div class="field-group">
+                  <label for="brand-secondary-name">Nome Secundário (Exibido Abaixo)</label>
+                  <input id="brand-secondary-name" type="text" maxlength="80" value="Estúdio de Ofertas Pro">
+                </div>
+
+                <div class="field-group">
+                  <label for="brand-logo-admin-input">Logomarca (PNG, JPG, JPEG ou WEBP)</label>
+                  <input id="brand-logo-admin-input" type="file" accept="image/png,image/jpeg,image/webp" class="file-input">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-wide" id="save-branding-btn">
+                  Salvar Identidade Visual
+                </button>
+              </form>
+            </div>
+
+            <div class="panel form-panel">
+              <div class="panel-heading">
+                <div class="number-chip">OS</div>
+                <div>
+                  <h2>Gerenciar Plano de Usuário</h2>
+                  <p>Altere plano, status ou simule vencimento para teste</p>
+                </div>
+              </div>
+
+              <form id="form-admin-user-plan" class="editor-form" novalidate>
+                <div class="field-group">
+                  <label for="admin-user-select">Usuário</label>
+                  <select id="admin-user-select"></select>
+                </div>
+
+                <div class="field-row">
+                  <div class="field-group">
+                    <label for="admin-plan-select">Plano</label>
+                    <select id="admin-plan-select">
+                      <option value="gratuito">Gratuito (5 dias)</option>
+                      <option value="mensal">Mensal (30 dias)</option>
+                      <option value="trimestral">Trimestral (90 dias)</option>
+                      <option value="anual">Anual (365 dias)</option>
+                    </select>
+                  </div>
+                  <div class="field-group">
+                    <label for="admin-status-select">Status</label>
+                    <select id="admin-status-select">
+                      <option value="ativa">Ativa</option>
+                      <option value="vencida">Vencida</option>
+                      <option value="pendente">Pendente</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-outline btn-wide" id="admin-apply-plan-btn">
+                  Atualizar Assinatura do Usuário
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="panel library-panel">
+            <div class="panel-heading">
+              <div class="number-chip">BD</div>
+              <div>
+                <h2>Registros de Assinaturas, Pagamentos, Renovações e Senhas</h2>
+                <p>Histórico consolidado de usuários e utilizações</p>
+              </div>
+            </div>
+            <div id="admin-records-list" class="history-list"></div>
+          </div>
+        </section>
+
+        <!-- TELA 6: AJUDA -->
+        <section class="screen" id="screen-help" hidden>
+          <div class="page-titlebar">
+            <div>
+              <div class="eyebrow">CENTRAL DE AJUDA</div>
+              <h1>Como usar o editor</h1>
+              <p>Guia rápido para montar seus cartazes promocionais.</p>
+            </div>
+          </div>
+          <div class="panel help-panel">
+            <div class="help-step"><span>01</span><div><h2>Escolha um Modelo ou Edite Direto</h2><p>Abra a Biblioteca de Modelos para aplicar um tema pronto ou preencha os campos diretamente no editor.</p></div></div>
+            <div class="help-step"><span>02</span><div><h2>Insira a Foto PNG do Produto</h2><p>Envie a foto do produto e arraste-a com o mouse ou dedo sobre o cartaz para posicionar onde desejar.</p></div></div>
+            <div class="help-step"><span>03</span><div><h2>Personalize Cores e Tipografia</h2><p>Use as paletas prontas ou ajuste cada cor individualmente (fundo, moldura, quadro de preço e textos).</p></div></div>
+            <div class="help-step"><span>04</span><div><h2>Exporte em Alta Resolução</h2><p>Baixe em PNG, JPG ou gere PDF pelo botão Imprimir / PDF.</p></div></div>
+            <button type="button" class="btn btn-primary" id="go-editor">Começar a Criar</button>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span id="footer-brand-name">Comercial Silva · Estúdio de Ofertas</span>
+        <span>Sistema 100% offline com exportação HD</span>
+      </footer>
+    </div>
+  </div>
+  <div role="status" aria-live="polite" id="toast" class="toast" hidden></div>
+</body>
+</html>
